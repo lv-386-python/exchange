@@ -1,4 +1,4 @@
-#Wellcome!
+# Wellcome!
 ## this is a simple curency exchange app.
 
 
