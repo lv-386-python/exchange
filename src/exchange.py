@@ -2,9 +2,6 @@
 Main module for exchange app
 '''
 
-
-
-
 import argparse
 
 from Rate import CurrencyRate
