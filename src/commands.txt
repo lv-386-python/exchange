@@ -7,7 +7,7 @@ Here is a list of available commands:
 * set_default('CURRENCY')
     set your base currency.
 * show_history('CURRENCY',number_of_days)
-    show s history of changes of currency in given period,
+    shows history ofcurrency's rate in given period,
     default numver of days = 3.
 * exit()
     exit programm.

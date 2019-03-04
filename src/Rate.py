@@ -1,52 +1,41 @@
 import requests
 
-PRIVAT_API = 'https://api.privatbank.ua/p24api/exchange_rates?json&date='
-
-
-def to_fixed(num, digits=2):
-    fixed = f"{num:.{digits}f}"
-    return float(fixed)
+NBU_API = f'https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?'
+AVAILABLE_CURRENCIES = {'USD', 'EUR', 'PLN', 'UAH'}
 
 
 class CurrencyRate:
-    def __init__(self, date, default="UAH"):
-        self._UAH = 1
+    def __init__(self, date, default='UAH'):
         self.date = date
         self.default = default
-        self._USD = None
-        self.get_data()
 
-    def get_data(self):
-        requests_url = f'{PRIVAT_API}{self.date}'
-        print(requests_url)
-        res = requests.get(requests_url).json()  # make request to API
-
-        all_currencies = res['exchangeRate'][1:]  # all rates except first
-        self._USD = list(filter(lambda d: d['currency'] == "USD", all_currencies))[0]['saleRate']
-        self._EUR = list(filter(lambda d: d['currency'] == "EUR", all_currencies))[0]['saleRate']
-        self._PLZ = list(filter(lambda d: d['currency'] == "PLZ", all_currencies))[0]['saleRate']
+    @staticmethod
+    def make_request(currency, date):
+        request_url = f'{NBU_API}valcode={currency}&date={date}&json'
+        response = requests.get(request_url).json()
+        rate = float(response[0]['rate'])
+        return round(rate, 2)
 
     def get_rate(self, currency):
-        currency = f'_{currency.upper()}'
-        return self.__dict__[currency]
+        if not currency.upper() in AVAILABLE_CURRENCIES:
+            print(f"No data for currency {currency}")
+            return None
 
-    def convert(self, sell: str, buy: str):
-        amount = ''  # 'zero' string
-        currency_to_sell = ''
-        digits = [char for char in sell if char.isdigit() or char == '.']
-        amount = amount.join(digits)
-        amount = float(amount)
-        letters = [char for char in sell if char.isalpha()]
-        if letters:
-            currency_to_sell = currency_to_sell.join(letters)
-        else:
-            currency_to_sell = self.default
+        if currency.upper() == 'UAH':
+            return 1
 
-        exchange_rate = self.get_rate(currency_to_sell) / self.get_rate(buy)
-        print(f'****  You can buy {to_fixed(amount * exchange_rate)}{buy.upper()}', end='')
+        return self.make_request(currency, self.date)
+
+    def convert(self, amount, sell, buy):
+        exchange_rate = self.get_rate(sell) / self.get_rate(buy)
+        result = amount * exchange_rate
+        print(f'\tYou can buy {round(result, 2)} {buy.upper()}', end='')
 
     def show_info(self):
         info = f'''\tDefault currency : {self.default},\n
-        available currencies : 'UAH', 'USD', 'EUR', 'PLZ', \n
-        API URL : {f'{PRIVAT_API}{self.date}'} '''
+        available currencies : {AVAILABLE_CURRENCIES},\n
+        API URL : {NBU_API} '''
         print(info)
+
+    def set_default(self, new_default):
+        self.default = new_default.upper()
