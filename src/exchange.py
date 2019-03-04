@@ -4,11 +4,10 @@ from Rate import CurrencyRate
 from Timeline import today, history
 
 parser = argparse.ArgumentParser(description='Culculate currency exchange rate')
-parser.add_argument('-d', '--default', type=str, help='Default currency')
+parser.add_argument('-d', '--default', type=str, help='Default currency', default='UAH')
 default = parser.parse_args().default
-if not default:
-    default = 'UAH'
 
+print (default)
 rate = CurrencyRate(today, default=default)
 
 if __name__ == '__main__':

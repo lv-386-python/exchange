@@ -12,14 +12,19 @@ class CurrencyRate:
     def __init__(self, date, default="UAH"):
         self._UAH = 1
         self.date = date
+        self.default = default
+        self._USD = None
+        self.get_data()
 
-        res = requests.get(f'{PRIVAT_API}{date}').json()  # make request to API
+    def get_data(self):
+        requests_url = f'{PRIVAT_API}{self.date}'
+        print(requests_url)
+        res = requests.get(requests_url).json()  # make request to API
 
         all_currencies = res['exchangeRate'][1:]  # all rates except first
         self._USD = list(filter(lambda d: d['currency'] == "USD", all_currencies))[0]['saleRate']
         self._EUR = list(filter(lambda d: d['currency'] == "EUR", all_currencies))[0]['saleRate']
         self._PLZ = list(filter(lambda d: d['currency'] == "PLZ", all_currencies))[0]['saleRate']
-        self.default = default
 
     def get_rate(self, currency):
         currency = f'_{currency.upper()}'
