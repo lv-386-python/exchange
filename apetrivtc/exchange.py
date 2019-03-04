@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 from menu_commands import (show_info, set_default_currency,
                             convert_currency, show_history)
 
@@ -33,7 +34,11 @@ def get_user_choice():
 
 ### MAIN PROGRAM ###
 
-default_currency = CURRENCIES[0]
+if len(sys.argv) == 2:
+    default_currency = sys.argv[1]
+else:
+    default_currency = CURRENCIES[0]
+
 choice = ''
 if __name__ == '__main__':
     # Set up a loop where users can choose what they'd like to do.
