@@ -24,7 +24,7 @@ DEFAULT_STRING = ''
 CHECK_RESULT = [1, 2, False]
 
 
-def redactdate(dd, dm, dy):
+def redactdate(date_d, date_m, date_y):
     '''
     :param dd: int
     :param dm: int
@@ -32,14 +32,14 @@ def redactdate(dd, dm, dy):
     :return: str
     '''
 
-    if dm > 9 and dd > 9:
-        return f'{dy}{dm}{dd}'
-    elif dd > 9 and dm < 10:
-        return f'{dy}0{dm}{dd}'
-    elif dd < 10 and dm > 9:
-        return f'{dy}{dm}0{dd}'
+    if date_m > 9 and date_d > 9:
+        return f'{date_y}{date_m}{date_d}'
+    elif date_d > 9 and date_m < 10:
+        return f'{date_y}0{date_m}{date_d}'
+    elif date_d < 10 and date_m > 9:
+        return f'{date_y}{date_m}0{date_d}'
     else:
-        return f'{dy}0{dm}0{dd}'
+        return f'{date_y}0{date_m}0{date_d}'
 
 
 def set_valute(set_val):
@@ -111,10 +111,10 @@ def convert(command):
             number = dec[1]
             valute = DEFAULT_VALCODE
         else:
-            up = list(dec[1])
+            up_val = list(dec[1])
             number = DEFAULT_STRING
             valute = DEFAULT_STRING
-            for i in up:
+            for i in up_val:
                 if i.isnumeric():
                     number = f'{number}{i}'
                 else:
@@ -168,21 +168,22 @@ def showhitory(com):
         val = his[2]
     else:
         return 'command error'
-    dat = date.today()
-    dd, dm, dy = dat.day, dat.month, dat.year
-    for i in range(v):
-        date_or = redactdate(dd, dm, dy)
+    date_today = date.today()
+    date_d, date_m, date_y = date_today.day, date_today.month, date_today.year
+    while v > 0:
+        date_or = redactdate(date_d, date_m, date_y)
         oneday = requests.get(f'{BASE_URL}valcode={val}&date={date_or}&json').json()[0]
         rez.append((oneday[VALUTE_NAME], oneday[VALUTE_RATE], oneday[DATE]))
-        dd -= 1
-        if dd == 0:
-            dd = MONTH
-            dm -= 1
-            if dm == 2:
-                dd = SECMONTH
-        if dm == 0:
-            dm = YEAR
-            dy -= 1
+        date_d -= 1
+        if date_d == 0:
+            date_d = MONTH
+            date_m -= 1
+            if date_m == 2:
+                date_d = SECMONTH
+        if date_m == 0:
+            date_m = YEAR
+            date_y -= 1
+        v -= 1
     return rez
 
 
