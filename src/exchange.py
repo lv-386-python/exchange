@@ -4,8 +4,8 @@ Main module for exchange app
 
 import argparse
 
-from Rate import CurrencyRate
-from Timeline import TODAY, history
+from rate import CurrencyRate
+from timeline import TODAY, history
 
 PARSER = argparse.ArgumentParser(description='Culculate currency exchange rate')
 PARSER.add_argument('-d', '--default', type=str, help='Default currency', default='UAH')

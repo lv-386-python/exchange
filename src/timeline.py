@@ -1,9 +1,12 @@
+"Module for working with dates, time and history logic"
+
 import datetime
 
-from Rate import CurrencyRate
+from rate import CurrencyRate
 
 
 def date_for_api(date):
+    'Return date string formatted for NBU API YYYYMMDD'
     if date.weekday() == 0 and date.hour < 12:
         date = date - datetime.timedelta(days=1)
 
@@ -18,6 +21,7 @@ TODAY = date_for_api(datetime.datetime.today())
 
 
 def history(currency, period=3):
+    'Take history of Currency rate and print it for the user'
     period = int(period)
     days = list(map(date_for_api,
                     [datetime.datetime.today() - datetime.timedelta(days=days_ago)
