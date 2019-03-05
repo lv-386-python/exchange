@@ -25,11 +25,11 @@ class CurrencyRate:
 
     def get_rate(self, currency):
         'Return currency rate'
-        if not currency.upper() in AVAILABLE_CURRENCIES:
+        if not currency in AVAILABLE_CURRENCIES:
             print(f"No data for currency {currency}")
             return None
 
-        if currency.upper() == 'UAH':
+        if currency == 'UAH':
             return 1
 
         return self.make_request(currency, self.date)
@@ -49,4 +49,4 @@ class CurrencyRate:
 
     def set_default(self, new_default):
         'Change deffault currency'
-        self.default = new_default.upper()
+        self.default = new_default
