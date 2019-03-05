@@ -1,14 +1,20 @@
-import requests
+"""ToDo."""
 import datetime
+
+import requests
 
 URL_API = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange"
 CURRENT = 'cc'
 VALUE = 'rate'
 CURRENT_COUNTRY = ['UAH', 'USD', 'EUR', 'PLN']
 DEFAULT_CURRENT = CURRENT_COUNTRY[0]
+PRESS_USER = ''
 
-def view_info(DEFAULT_CURRENT, currencies):
-    print("Default current: {0}".format(DEFAULT_CURRENT))
+
+def view_info(current, currencies):
+    """ToDo."""
+
+    print("Default current: {0}".format(current))
     print("API URL: {0}".format(URL_API))
 
     currency_rates = get_currency(currencies)
@@ -17,6 +23,7 @@ def view_info(DEFAULT_CURRENT, currencies):
 
 
 def get_currency(currencies):
+    """ToDo."""
     request = requests.get("{0}?json".format(URL_API))
     if request.status_code != 200:
         print("Service is temporarily unavailable.")
@@ -28,18 +35,22 @@ def get_currency(currencies):
 
 
 def currency_day(currency, date):
+    """ToDo."""
     if currency == 'UAH':
         return 1
     day = date.strftime('%Y%m%d')
     request = requests.get("{0}?valcode={1}&date={2}&json".format(URL_API, currency, day))
     if request.status_code != 200:
         print("Error maybe API doesn`t work :(")
-    for i in request.json():
-        if i[CURRENT] == currency:
-            return i[VALUE]
+    data = request.json()
+    for obj in data:
+        if obj.get(CURRENT) == currency:
+            return obj.get(VALUE)
+    return None
 
 
 def default_currency(currencies):
+    """ToDo."""
     while True:
         print("Choose values:")
         for choice, currency in enumerate(currencies, 1):
@@ -51,10 +62,12 @@ def default_currency(currencies):
         number = int(user_input)
         if number in dict(enumerate(currencies, 1)):
             return dict(enumerate(currencies, 1))[number]
-        else:
-            print("Please choose correct value.")
 
-def convert_currency(DEFAULT_CURRENT, currencies):
+        print("Please choose correct value.")
+
+
+def convert_currency(current, currencies):
+    """ToDo."""
     print("'q' --- to exit.")
     print(" ".join(currencies))
     print("[sum][currency]")
@@ -82,11 +95,12 @@ def convert_currency(DEFAULT_CURRENT, currencies):
             continue
         currency_sum = int("".join(currency_sum))
         currency_rates = get_currency(currencies)
-        result = currency_sum * currency_rates[currency] / (currency_rates[DEFAULT_CURRENT])
-        print("{0} {1} = {2:.2f} {3}\n".format(currency_sum, currency, result, DEFAULT_CURRENT))
+        result = currency_sum * currency_rates[currency] / (currency_rates[current])
+        print("{0} {1} = {2:.2f} {3}\n".format(currency_sum, currency, result, current))
 
 
 def view_history(currencies):
+    """ToDo."""
     print("\nEnter current and day {USD 5} (default 7 days).")
     print("Available currency:")
     print(" ".join(currencies))
@@ -104,7 +118,7 @@ def view_history(currencies):
             print("Your requests not good, try again.")
             continue
         else:
-            currency, days =  user_input.split(" ",1)
+            currency, days = user_input.split(" ", 1)
         if not days.isdigit() or currency not in currencies:
             print("Your requests not good, try again.")
             continue
@@ -116,14 +130,15 @@ def view_history(currencies):
 
 
 def main_menu_system():
+    """ToDo."""
+
     print("\n---------- MAIN MENU EXCHANGE SYSTEM ----------")
     print("\n1. Show info.")
     print("\n2. Show default currency.")
     print("\n3. Convert currency.")
-    print("\n4. Show history.")
+    print("\n4. Sgit how history.")
     print("\nq. Quit.\n")
 
-PRESS_USER = ''
 
 if __name__ == '__main__':
     main_menu_system()
@@ -133,7 +148,7 @@ if __name__ == '__main__':
         if PRESS_USER == '1':
             view_info(DEFAULT_CURRENT, CURRENT_COUNTRY)
         elif PRESS_USER == '2':
-            default_currency = default_currency(CURRENT_COUNTRY)
+            default_currency(CURRENT_COUNTRY)
             main_menu_system()
         elif PRESS_USER == '3':
             convert_currency(DEFAULT_CURRENT, CURRENT_COUNTRY)
