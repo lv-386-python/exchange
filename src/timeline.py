@@ -10,10 +10,7 @@ def date_for_api(date):
     if date.weekday() == 0 and date.hour < 12:
         date = date - datetime.timedelta(days=1)
 
-    day = str(date.day).rjust(2, '0')
-    month = str(date.month).rjust(2, '0')
-    year = date.year
-    formatted_for_api = f'{year}{month}{day}'
+    formatted_for_api = date.__format__('%Y%m%d')
     return formatted_for_api
 
 

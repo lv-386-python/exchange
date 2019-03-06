@@ -9,9 +9,9 @@ from timeline import TODAY, history
 
 PARSER = argparse.ArgumentParser(description='Culculate currency exchange rate')
 PARSER.add_argument('-d', '--default', type=str, help='Default currency', default='UAH')
-default = PARSER.parse_args().default
+DEFAULT_CURRENCY = PARSER.parse_args().default
 
-TODAY_RATE = CurrencyRate(TODAY, default=default)
+TODAY_RATE = CurrencyRate(TODAY, default=DEFAULT_CURRENCY)
 
 
 def execute_command(command):
