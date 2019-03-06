@@ -1,22 +1,25 @@
-from exch import showmainmenu, donecommand, convert, EXIT
+'''
+main file of valute converter
+'''
 import argparse
+from exch import showmainmenu, donecommand, convert, EXIT
 
 
-parser = argparse.ArgumentParser(description='Cache converter')
-parser.add_argument('-v', '--value', type=str, default=None,
+PARSER = argparse.ArgumentParser(description='Cache converter')
+PARSER.add_argument('-v', '--value', type=str, default=None,
                     help='value ar value and valute what program should convert')
-parser.add_argument('-e', '--endvalute', type=str, default=None,
+PARSER.add_argument('-e', '--endvalute', type=str, default=None,
                     help='the currency in which the value is converted')
-def_arg = parser.parse_args()
-conv = convert(f'0 {def_arg.value} {def_arg.endvalute}')
+DEF_ARG = PARSER.parse_args()
+CONV = convert(f'0 {DEF_ARG.value} {DEF_ARG.endvalute}')
 
 if __name__ == '__main__':
-    if def_arg.value != None and def_arg.endvalute != None:
-        print(conv)
+    if DEF_ARG.value is not None and DEF_ARG.endvalute is not None:
+        print(CONV)
     else:
         print(showmainmenu())
-        c = input().lower()
-        while c not in EXIT:
-            donecommand(c)
+        C = input().lower()
+        while C not in EXIT:
+            donecommand(C)
             print(showmainmenu())
-            c = input().lower()
+            C = input().lower()
