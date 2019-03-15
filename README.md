@@ -1,4 +1,4 @@
-SIMPLE CONSOLE APP "EXCHANG APP"
+SIMPLE CONSOLE APP "EXCHANGE APP"
 
 You can get the info about cuurencies or manipulate the data using following commands:
 
