@@ -1,5 +1,5 @@
 """
-Set of functions for using in menu.
+Set of functions for using in menu_view.
 """
 
 import datetime
@@ -9,11 +9,14 @@ import requests
 JSON_API = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange"
 CURRENCY_LIST = ['UAH', 'USD', 'EUR', 'PLN']
 CURRENCY_CODE_IN_JSON = 'cc'
+UAH_DEFAULT_RATE = 1
+HTTP_OK_STATUS = 200
+DEFAULT_DAYS_FOR_HISTORY = '3'
 
 
 def display_title_bar():
     """
-    Displays a title bar and menu.
+    Displays a title bar.
     """
     print("\t**********************************************")
     print("\t***               EXCHANGE.PY              ***")
@@ -35,36 +38,39 @@ def get_user_choice():
     return input("What would you like to do? ")
 
 
-def menu(default_currency):
+def clear_and_display_menu():
     """
-    Launches and processes the menu.
+    Clears screen and displays a title bar.
     """
-    choice = ''
     os.system('clear')
     display_title_bar()
+
+
+def menu_view(default_currency):
+    """
+    Launches and processes the top menu.
+    """
+    choice = ''
+    clear_and_display_menu()
     # Set up a loop where users can choose what they'd like to do.
     while choice != 'q':
         choice = get_user_choice()
-        os.system('clear')
-        display_title_bar()
+        clear_and_display_menu()
         # Respond to the user's choice.
         if choice == '1':
             info = show_info(default_currency, CURRENCY_LIST)
             print(info)
         elif choice == '2':
             default_currency = set_default_currency(CURRENCY_LIST)
-            os.system('clear')
-            display_title_bar()
+            clear_and_display_menu()
         elif choice == '3':
             convert_currency(default_currency, CURRENCY_LIST)
             input("Please press enter to continue.")
-            os.system('clear')
-            display_title_bar()
+            clear_and_display_menu()
         elif choice == '4':
             show_history(CURRENCY_LIST)
             input("Please press enter to continue.")
-            os.system('clear')
-            display_title_bar()
+            clear_and_display_menu()
         elif choice == 'q':
             print("\nThanks for visiting!\n")
         else:
@@ -73,7 +79,7 @@ def menu(default_currency):
 
 def show_info(default_currency, currencies):
     """
-    Returns exchange rate for currencies.
+    Returns general information (default currenct, exchange rate for currencies).
     """
     info = f"Default currency: {default_currency}\n"
     info += f"JSON_API URL: {JSON_API}\n"
@@ -85,30 +91,33 @@ def show_info(default_currency, currencies):
 
 def get_currency_rates(currencies):
     """
-    Returns dictionary with currency rates.
+    Returns dictionary with currency rates if API works.
+    Else returns None.
     """
     request = requests.get(f"{JSON_API}?json")
-    if request.status_code != 200:
+    if request.status_code != HTTP_OK_STATUS:
         print("Service is temporarily unavailable.")
-    currency_rates = {}.fromkeys(currencies, 1)
+        return None
+    currency_rates = {}.fromkeys(currencies, UAH_DEFAULT_RATE)
     for item in request.json():
-        if item['CURRENCY_CODE_IN_JSON'] in currencies:
-            currency_rates[item['CURRENCY_CODE_IN_JSON']] = (item['rate'])
+        if item[CURRENCY_CODE_IN_JSON] in currencies:
+            currency_rates[item[CURRENCY_CODE_IN_JSON]] = (item['rate'])
     return currency_rates
 
 
 def get_currency_rate_per_day(currency, date):
     """
-    Returns dictionary with currency rates for a certain day.
+    Returns dictionary with currency rates for a certain day if API works.
+    Else returns None.
     """
     if currency == 'UAH':
-        return 1
+        return UAH_DEFAULT_RATE
     day = date.strftime('%Y%m%d')
     request = requests.get(f"{JSON_API}?valcode={currency}&date={day}&json")
-    if request.status_code != 200:
+    if request.status_code != HTTP_OK_STATUS:
         return "Service is temporarily unavailable."
     for item in request.json():
-        if item['CURRENCY_CODE_IN_JSON'] == currency:
+        if item[CURRENCY_CODE_IN_JSON] == currency:
             return item['rate']
         return None
 
@@ -143,7 +152,10 @@ def convert_currency(default_currency, currencies):
 
     while True:
         user_input = input(">>> ")
-        if user_input == 'q':
+        if not user_input:
+            print("Incorrect input. Please try again.")
+            continue
+        elif user_input == 'q':
             break
         currency_sum = []
         currency = ""
@@ -171,15 +183,14 @@ def convert_currency(default_currency, currencies):
 
 def show_history(currencies):
     """
-    Show history of exchange rate of chosen currency.
-    By default shows a course of 3 days.
+    Shows history of exchange rate of chosen currency.
+    By default shows exchange rates during 3 days.
     """
     print("\n\nPlease enter currency and number of days (default 3).")
     print("Or press 'q' to exit.")
     print("Available currency:")
     print(" ".join(currencies))
-    print("Input format: [currency] [sum]")
-    default_days = '3'
+    print("Input format: [currency] [days]")
 
     while True:
         user_input = input(">>> ")
@@ -189,7 +200,7 @@ def show_history(currencies):
             if user_input not in currencies:
                 print("No such currency. Please try again.")
                 continue
-            currency, days = user_input, default_days
+            currency, days = user_input, DEFAULT_DAYS_FOR_HISTORY
         elif user_input.isdigit():
             print("Incorrect input. Please try again.")
             continue

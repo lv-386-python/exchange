@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
+"""
+Main module for script launching.
+"""
+
 import argparse
-from menu.menu_commands import menu
+from commands import menu_view
 
 
 def get_default_currency():
@@ -17,4 +21,4 @@ def get_default_currency():
 
 if __name__ == '__main__':
     DEFAULT_CURRENCY = get_default_currency()
-    menu(DEFAULT_CURRENCY)
+    menu_view(DEFAULT_CURRENCY)
